@@ -42,6 +42,7 @@ export default function PanelPage() {
             height={64}
             className='rounded-full outline-2 border-slate-400 p-0.5'
             loading='lazy'
+            unoptimized
           />
         ) : null}
         <div className='text-center sm:text-right'>
