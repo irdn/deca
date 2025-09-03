@@ -47,6 +47,7 @@ export default function LoginPage() {
       router.replace('/panel');
     } catch (err) {
       showAlert('ورود ناموفق بود. لطفاً دوباره تلاش کنید.', 'error');
+      console.log(err);
     } finally {
       setLoading(false);
     }
