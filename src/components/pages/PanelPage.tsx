@@ -2,7 +2,14 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Heading, useAlert, AppImage } from '@/components';
+import {
+  Button,
+  Heading,
+  useAlert,
+  AppImage,
+  Card,
+  CardContent,
+} from '@/components';
 import { readUserFromStorage, clearUserFromStorage } from '@/lib';
 
 export default function PanelPage() {
@@ -32,29 +39,33 @@ export default function PanelPage() {
   if (!name) return null;
 
   return (
-    <div className='rounded-xl bg-white p-6 shadow-xl'>
-      <div className='flex flex-col items-center gap-4 sm:flex-row '>
-        {pictureUrl ? (
-          <AppImage
-            src={pictureUrl}
-            alt={name}
-            width={64}
-            height={64}
-            className='rounded-full outline-2 border-slate-400 p-0.5'
-            loading='lazy'
-            unoptimized
-          />
-        ) : null}
-        <div className='text-center sm:text-right'>
-          <Heading level={2}>{`${name} خوش آمدی`}</Heading>
-          {email ? <p className='text-sm text-gray-600'>{email}</p> : null}
+    <Card className='w-full max-w-2xl mx-auto'>
+      <CardContent className='p-6'>
+        <div className='flex flex-col items-center gap-4 sm:flex-row'>
+          {pictureUrl ? (
+            <AppImage
+              src={pictureUrl}
+              alt={name}
+              width={64}
+              height={64}
+              className='rounded-full outline-2 p-0.5'
+              loading='lazy'
+              unoptimized
+            />
+          ) : null}
+          <div className='text-center sm:text-right'>
+            <Heading level={2}>{`${name} خوش آمدی`}</Heading>
+            {email ? (
+              <p className='text-sm mt-3 text-muted-foreground'>{email}</p>
+            ) : null}
+          </div>
+          <div className='w-full sm:ms-auto sm:w-auto sm:mt-0 mt-5'>
+            <Button className='w-full sm:w-auto' onClick={onLogout}>
+              خروج
+            </Button>
+          </div>
         </div>
-        <div className='w-full sm:ms-auto sm:w-auto'>
-          <Button className='w-full sm:w-auto' onClick={onLogout}>
-            خروج
-          </Button>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

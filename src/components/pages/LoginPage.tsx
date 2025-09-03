@@ -2,7 +2,14 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Input, Button, Heading, useAlert } from '@/components';
+import {
+  Input,
+  Button,
+  Heading,
+  useAlert,
+  Card,
+  CardContent,
+} from '@/components';
 import {
   validateIranianMobile,
   saveUserToStorage,
@@ -45,46 +52,47 @@ export default function LoginPage() {
       });
       showAlert('ورود با موفقیت انجام شد.', 'success');
       router.replace('/panel');
-    } catch (err) {
+    } catch {
       showAlert('ورود ناموفق بود. لطفاً دوباره تلاش کنید.', 'error');
-      console.log(err);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className='rounded-xl bg-white p-6 shadow-xl w-full'>
-      <Heading id='login-title' level={1} className='mb-6'>
-        ورود به پنل
-      </Heading>
-      <form
-        onSubmit={onSubmit}
-        className='space-y-4'
-        noValidate
-        aria-labelledby='login-title'
-      >
-        <Input
-          label='شماره موبایل'
-          ref={phoneInputRef}
-          placeholder='09XX XXX XXXX'
-          inputMode='tel'
-          autoComplete='tel'
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          error={error}
-          aria-label='شماره موبایل'
-          dir='ltr'
-        />
-        <Button
-          type='submit'
-          loading={loading}
-          disabled={loading}
-          className='w-full'
+    <Card className='w-full max-w-md mx-auto'>
+      <CardContent className='p-6'>
+        <Heading id='login-title' level={1} className='mb-6'>
+          ورود به پنل
+        </Heading>
+        <form
+          onSubmit={onSubmit}
+          className='space-y-4'
+          noValidate
+          aria-labelledby='login-title'
         >
-          ورود
-        </Button>
-      </form>
-    </div>
+          <Input
+            label='شماره موبایل'
+            ref={phoneInputRef}
+            placeholder='09XX XXX XXXX'
+            inputMode='tel'
+            autoComplete='tel'
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            error={error}
+            aria-label='شماره موبایل'
+            dir='ltr'
+          />
+          <Button
+            type='submit'
+            loading={loading}
+            disabled={loading}
+            className='w-full'
+          >
+            ورود
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

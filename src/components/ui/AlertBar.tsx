@@ -1,76 +1,88 @@
 'use client';
 
 import * as React from 'react';
+import { cva } from 'class-variance-authority';
 
-export type AlertBarVariant = 'success' | 'error' | 'info';
+import { cn } from '@/lib/utils';
+import { X } from 'lucide-react';
 
-export type AlertBarProps = {
+const alertVariants = cva(
+  'relative w-full rounded-lg border px-4 py-3 text-sm',
+  {
+    variants: {
+      variant: {
+        default: 'bg-background text-foreground',
+        destructive:
+          'border-destructive/50 text-destructive dark:border-destructive',
+        success:
+          'border-green-500/50 bg-green-50 text-green-700 dark:border-green-500 dark:bg-green-950 dark:text-green-300',
+        info: 'border-blue-500/50 bg-blue-50 text-blue-700 dark:border-blue-500 dark:bg-blue-950 dark:text-blue-300',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+);
+
+export type AlertBarVariant = 'success' | 'error' | 'info' | 'default';
+
+export interface AlertBarProps extends React.HTMLAttributes<HTMLDivElement> {
   message: string;
   variant?: AlertBarVariant;
+  autoClose?: boolean;
+  autoCloseDelay?: number;
   onClose?: () => void;
-  className?: string;
-};
-
-const variantStyles: Record<AlertBarVariant, string> = {
-  success:
-    'bg-green-500 text-white shadow-md ring-1 ring-green-500/50 dark:ring-green-400/40',
-  error:
-    'bg-red-500 text-white shadow-md ring-1 ring-red-500/50 dark:ring-red-400/40',
-  info: 'bg-blue-500 text-white shadow-md ring-1 ring-blue-500/50 dark:ring-blue-400/40',
-};
+}
 
 export function AlertBar({
   message,
   variant = 'info',
+  className,
+  autoClose = true,
+  autoCloseDelay = 3000,
   onClose,
-  className = '',
+  ...props
 }: AlertBarProps) {
   const [isVisible, setIsVisible] = React.useState(true);
+
   React.useEffect(() => {
     setIsVisible(true);
-    const timer = window.setTimeout(() => setIsVisible(false), 3000);
-    return () => window.clearTimeout(timer);
-  }, [message, variant]);
+    if (autoClose) {
+      const timer = window.setTimeout(
+        () => setIsVisible(false),
+        autoCloseDelay
+      );
+      return () => window.clearTimeout(timer);
+    }
+  }, [message, variant, autoClose, autoCloseDelay]);
 
   if (!isVisible) return null;
+
+  const mappedVariant: 'default' | 'destructive' | 'success' | 'info' =
+    variant === 'error' ? 'destructive' : variant;
 
   return (
     <div
       role='status'
       aria-live='polite'
       aria-atomic='true'
-      className={`fixed top-3 left-3 z-50 ${className}`}
+      className='fixed top-3 left-3 z-50 w-[min(92vw,420px)]'
     >
       <div
-        className={`rounded-md px-4 py-3 text-sm w-[min(92vw,420px)] ${variantStyles[variant]}`}
+        className={cn(alertVariants({ variant: mappedVariant }), className)}
+        {...props}
       >
-        <div className='flex items-start gap-3'>
-          <span className='flex-1'>{message}</span>
+        <span>{message}</span>
+        {onClose && (
           <button
-            type='button'
-            aria-label='بستن'
-            className='ms-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-white/15 hover:bg-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-950 focus-visible:ring-white'
-            onClick={() => {
-              setIsVisible(false);
-              onClose?.();
-            }}
+            onClick={onClose}
+            className='absolute left-3 top-3 text-current opacity-70 hover:opacity-100'
+            aria-label='Close alert'
           >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='size-6'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M6 18 18 6M6 6l12 12'
-              />
-            </svg>
+            <X className='h-4 w-4' />
           </button>
-        </div>
+        )}
       </div>
     </div>
   );

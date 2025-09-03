@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { cn } from '@/lib/utils';
+
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
@@ -7,17 +9,13 @@ type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
   children: React.ReactNode;
 };
 
-function cx(...classes: Array<string | undefined>) {
-  return classes.filter(Boolean).join(' ');
-}
-
 const levelToClassName: Record<HeadingLevel, string> = {
-  1: 'text-2xl font-semibold text-gray-900',
-  2: 'text-xl font-semibold text-gray-900',
-  3: 'text-lg font-semibold text-gray-900',
-  4: 'text-base font-semibold text-gray-900',
-  5: 'text-sm font-semibold text-gray-900',
-  6: 'text-xs font-semibold text-gray-900',
+  1: 'scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl',
+  2: 'scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0',
+  3: 'scroll-m-20 text-2xl font-semibold tracking-tight',
+  4: 'scroll-m-20 text-xl font-semibold tracking-tight',
+  5: 'mt-8 scroll-m-20 text-lg font-semibold tracking-tight',
+  6: 'mt-8 scroll-m-20 text-base font-semibold tracking-tight',
 };
 
 export function Heading({
@@ -31,7 +29,7 @@ export function Heading({
     props.title ?? (typeof children === 'string' ? children : undefined);
   return (
     <Tag
-      className={cx(levelToClassName[level], className)}
+      className={cn(levelToClassName[level], className)}
       title={derivedTitle}
       {...props}
     >

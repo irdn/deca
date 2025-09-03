@@ -1,48 +1,67 @@
-'use client';
-
 import * as React from 'react';
 
-export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
-  label: string;
-  error?: string;
-};
+import { cn } from '@/lib/utils';
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, className = '', id, ...props }, ref) => {
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, label, error, id, ...props }, ref) => {
     const generatedId = React.useId();
-    const inputId = id ?? generatedId;
+    const inputId = id || generatedId;
     const describedBy = error ? `${inputId}-error` : undefined;
-    const derivedTitle = props.title ?? label;
+
+    if (label) {
+      return (
+        <div className='w-full'>
+          <label
+            htmlFor={inputId}
+            className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+          >
+            {label}
+          </label>
+          <input
+            type={type}
+            className={cn(
+              'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+              error && 'border-destructive focus-visible:ring-destructive',
+              className
+            )}
+            ref={ref}
+            id={inputId}
+            aria-invalid={!!error}
+            aria-describedby={describedBy}
+            {...props}
+          />
+          {error && (
+            <p
+              id={`${inputId}-error`}
+              className='text-sm text-destructive mt-1'
+            >
+              {error}
+            </p>
+          )}
+        </div>
+      );
+    }
 
     return (
-      <div className={`w-full ${className}`}>
-        <label
-          htmlFor={inputId}
-          className='block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1'
-        >
-          {label}
-        </label>
-        <input
-          ref={ref}
-          id={inputId}
-          aria-invalid={!!error}
-          aria-describedby={describedBy}
-          className={`block w-full rounded-md border px-3 py-2 text-base bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-950 disabled:opacity-50 disabled:cursor-not-allowed ${
-            error
-              ? 'border-red-500 focus-visible:ring-red-500'
-              : 'border-gray-300 dark:border-gray-700'
-          }`}
-          title={derivedTitle}
-          {...props}
-        />
-        {error ? (
-          <p id={`${inputId}-error`} className='mt-1 text-sm text-red-600'>
-            {error}
-          </p>
-        ) : null}
-      </div>
+      <input
+        type={type}
+        className={cn(
+          'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+          error && 'border-destructive focus-visible:ring-destructive',
+          className
+        )}
+        ref={ref}
+        {...props}
+      />
     );
   }
 );
-
 Input.displayName = 'Input';
+
+export { Input };
